@@ -28,7 +28,7 @@
                 ?>
                 <div class="article"> 
                     <p><?php echo $comment->text;?></p>
-                    <p>Komentiral: <?php echo $comment->user->username?>, <?php echo date_format(date_create($comment->date), 'd. m. Y \ob H:i:s'); ?></p>
+                    <p>Komentiral: <a href="/users/profile?id=<?php echo $comment->user_id;?>" class="nav-link d-inline"><?php echo $comment->user->username?></a>, <?php echo date_format(date_create($comment->date), 'd. m. Y \ob H:i:s'); ?></p>   
                 </div>
                 <?php
             }

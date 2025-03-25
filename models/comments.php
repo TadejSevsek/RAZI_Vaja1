@@ -42,5 +42,13 @@ class Comment {
         }
         return $list;
     }
-
+    public static function count($id)
+    {
+        $db = Db::getInstance(); // pridobimo instanco baze
+        $id = mysqli_real_escape_string($db, $id);
+        $query = "SELECT COUNT(id) FROM comments where user_id = $id;"; // pripravimo query
+        $res = $db->query($query); // poženemo query
+        
+        return $res->fetch_row()[0];
+    }
 }

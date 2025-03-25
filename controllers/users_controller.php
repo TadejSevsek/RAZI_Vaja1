@@ -87,4 +87,15 @@ class users_controller
         }
         die();
     }
+    function profile(){
+        if(!isset($_GET["id"])){
+            return call('pages', 'error');          
+        }else{
+            $user = User::find($_GET["id"]);
+            $newsCount = count(Article::list($_GET["id"]));
+            $commentsCount = Comment::count($_GET["id"]);
+            require_once('views/users/profile.php');
+
+        }
+    }
 }
