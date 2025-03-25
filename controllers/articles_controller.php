@@ -71,5 +71,42 @@ class articles_controller
         $articles = Article::list($_SESSION["USER_ID"]);
         require_once('views/articles/list.php');
     }
+    function edit(){
+        
+        //drugače najdemo oglas in ga prikažemo
+        $article = Article::find($_GET['id']);
+        $error = "";
+        if(isset($_GET["error"])){
+            switch($_GET["error"]){
+                case 1: $error = "Izpolnite vse podatke"; break;
+                default: $error = "Prišlo je do napake.";
+            }
+        }
+        require_once('views/articles/edit.php');
+        
+    }
+
+    function update(){
+       
+        
+        //drugače najdemo oglas in ga prikažemo
+        $article = Article::find($_POST['id']);
+        
+        //Preveri če so vsi podatki izpolnjeni
+        if(empty($_POST["title"]) || empty($_POST["abstract"]) || empty($_POST["text"])){
+            header("Location: /articles/edit?error=1"); 
+        }
+    
+        //Podatki so pravilno izpolnjeni, registriraj uporabnika
+        else if($article->update($_POST["title"], $_POST["abstract"], $_POST["text"], $_POST["id"])){
+            header("Location: /");
+        }
+        //Prišlo je do napake pri registraciji
+        else{
+            header("Location: /vusers/edit?error=3"); 
+        }
+        die();
+    }
+
 
 }
