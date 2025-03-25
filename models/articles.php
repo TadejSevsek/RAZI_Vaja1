@@ -69,4 +69,18 @@ class Article
             return false;
         } 
     }
+    public static function list($id)
+    {
+        
+        $db = Db::getInstance(); // pridobimo instanco baze
+        $id = mysqli_real_escape_string($db, $id);
+        $query = "SELECT * FROM articles where user_id = $id;"; // pripravimo query
+        $res = $db->query($query); // poženemo query
+        $articles = array();
+        while ($article = $res->fetch_object()) {
+            // Za vsak rezultat iz baze ustvarimo objekt (kličemo konstuktor) in ga dodamo v array $articles
+            array_push($articles, new Article($article->id, $article->title, $article->abstract, $article->text, $article->date, $article->user_id));
+        }
+        return $articles;
+    }
 }

@@ -61,4 +61,15 @@ class articles_controller
         }
         die();
     }
+    public function list()
+    {
+        if (!isset($_SESSION["USER_ID"])) {
+            return call('pages', 'error'); //če ne, kličemo akcijo napaka na kontrolerju stran
+            //retun smo nastavil za to, da se izvajanje kode v tej akciji ne nadaljuje
+        }
+        //drugače najdemo oglase in ga prikažemo
+        $articles = Article::list($_SESSION["USER_ID"]);
+        require_once('views/articles/list.php');
+    }
+
 }
