@@ -63,7 +63,7 @@ class users_controller
         require_once('views/users/edit.php');
     }
 
-    function update(){
+    ffunction update(){
         if(!isset($_SESSION["USER_ID"])){
             header("Location: /pages/error");
             die();
@@ -77,14 +77,42 @@ class users_controller
         else if($user->username != $_POST["username"] && User::is_available($_POST["username"])){
             header("Location: /users/edit?error=2"); 
         }
-        //Podatki so pravilno izpolnjeni, registriraj uporabnika
-        else if($user->update($_POST["username"], $_POST["email"])){
-            header("Location: /");
+        else if (empty($_POST["oldPassword"]) && (empty($_POST["repeat"]) || empty($_POST["newPassword"]))){
+            if($user->update($_POST["username"], $_POST["email"])){
+                header("Location: /");
+            }
         }
+
+        else if(empty($_POST["oldPassword"]) || (empty($_POST["repeat"]) || empty($_POST["newPassword"]))){
+            header("Location: /users/edit?error=1"); 
+        }
+        else if(!empty($_POST["oldPassword"]) && (!empty($_POST["repeat"]) && !empty($_POST["newPassword"]))){
+           if($_POST["newPassword"] != $_POST["repeat"]){
+               header("Location: /users/edit?error=4"); 
+           }
+           else if(User::authenticate($user->username, $_POST["oldPassword"]) < 0){
+               header("Location: /users/edit?error=3"); 
+           }else{
+                $user->update($_POST["username"], $_POST["email"], $_POST["newPassword"]);
+                header("Location: /");
+           }
+        }
+        
         //Prišlo je do napake pri registraciji
         else{
-            header("Location: /users/edit?error=3"); 
+            header("Location: /users/edit?error=4"); 
         }
         die();
+    }
+    function profile(){
+        if(!isset($_GET["id"])){
+            return call('pages', 'error');          
+        }else{
+            $user = User::find($_GET["id"]);
+            $newsCount = count(Article::list($_GET["id"]));
+            $commentsCount = Comment::count($_GET["id"]);
+            require_once('views/users/profile.php');
+
+        }
     }
 }
