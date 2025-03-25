@@ -55,4 +55,54 @@ class Article
         }
         return null;
     }
+    public static function create($title, $abstract, $text){
+        $db = Db::getInstance();
+        $title = mysqli_real_escape_string($db, $title);
+        $abstract = mysqli_real_escape_string($db, $abstract);
+        $text = mysqli_real_escape_string($db, $text);
+        $id = $_SESSION["USER_ID"];
+        $query = "INSERT INTO articles(title, abstract, text, user_id) VALUES ('$title','$abstract','$text','$id');";
+        if($db->query($query)){
+            return true;
+        }
+        else{
+            return false;
+        } 
+    }
+    public static function list($id)
+    {
+        
+        $db = Db::getInstance(); // pridobimo instanco baze
+        $id = mysqli_real_escape_string($db, $id);
+        $query = "SELECT * FROM articles where user_id = $id;"; // pripravimo query
+        $res = $db->query($query); // poženemo query
+        $articles = array();
+        while ($article = $res->fetch_object()) {
+            // Za vsak rezultat iz baze ustvarimo objekt (kličemo konstuktor) in ga dodamo v array $articles
+            array_push($articles, new Article($article->id, $article->title, $article->abstract, $article->text, $article->date, $article->user_id));
+        }
+        return $articles;
+    }
+
+    public function update($title, $abstract, $text, $id){
+        $db = Db::getInstance();
+        $text = mysqli_real_escape_string($db, $text);
+        $abstract = mysqli_real_escape_string($db, $abstract);
+        $title = mysqli_real_escape_string($db, $title);
+        $query = "UPDATE articles SET title='$title', abstract='$abstract' ,text='$text' WHERE id=$id;";
+        if($db->query($query)){
+            return true;
+        }
+        else{
+            return false;
+        } 
+    }
+    public static function delete($id)
+    {
+        $db = Db::getInstance();
+        $id = mysqli_real_escape_string($db, $id);
+        $query = "DELETE FROM articles WHERE id = '$id';";
+        $res = $db->query($query);
+        return null;
+    }
 }
